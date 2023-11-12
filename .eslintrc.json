@@ -12,7 +12,7 @@
         },
         "pathGroups": [
           {
-            "pattern": "@(models|components)/**",
+            "pattern": "src/**",
             "group": "internal"
           }
         ],
