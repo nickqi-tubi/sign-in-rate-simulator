@@ -6,6 +6,7 @@ const Chart = ({ data, config }) => {
     xField: 'day',
     yField: 'value',
     height: 500,
+    seriesField: 'refreshStrategy',
     ...config,
   };
 

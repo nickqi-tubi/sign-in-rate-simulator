@@ -3,6 +3,7 @@ import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
 import Chart from 'src/components/chart';
+import { REFRESH_STRATEGIES } from 'src/constants';
 import User from 'src/models/user';
 
 import styles from './App.module.scss';
@@ -17,49 +18,62 @@ const today = dayjs();
 
 const initializeUsers = () => {
   const users = [];
+  const counterpartUsers = [];
 
   for (let i = 0; i < USER_NUM; i++) {
-    const lastSeenAt = today.subtract(_.random(LAST_SEEN_RANGE), 'day');
-
-    users.push(
-      new User({
-        id: i + 1,
-        lastSeenAt,
-        sessionRefreshAt: lastSeenAt,
-        tokenRefreshAt: lastSeenAt,
-      }),
-    );
+    const lastSeenAt = today.subtract(_.random(LAST_SEEN_RANGE), 'day').valueOf();
+    const attrs = {
+      id: i + 1,
+      lastSeenAt,
+      sessionRefreshAt: lastSeenAt,
+      tokenRefreshAt: lastSeenAt,
+    };
+    const user = new User(attrs);
+    const counterpartUser = new User(attrs);
+    users.push(user);
+    counterpartUsers.push(counterpartUser);
   }
 
-  return users;
+  return { users, counterpartUsers };
+};
+
+const chartDataGenerator = (users, refreshStrategy) => (day) => {
+  users.forEach((user) => {
+    // Simulate a user visit
+    if (_.random(AVERAGE_VISIT_FREQUENCY_IN_DAYS) === 0) {
+      user.visit(day, refreshStrategy);
+    }
+  });
+
+  const loggedInUsers = users.filter((user) => user.isLoggedIn(day));
+
+  return {
+    day: `Day ${day.diff(today, 'day')}`,
+    value: loggedInUsers.length,
+    refreshStrategy,
+  };
 };
 
 const App = () => {
-  const [chartData, setChatData] = useState([]);
+  const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
     const data = [];
-    const users = initializeUsers();
+    const { users, counterpartUsers } = initializeUsers();
+    console.log({
+      users,
+      counterpartUsers,
+    });
+    const genDataWithExistingRefreshStrategy = chartDataGenerator(users, REFRESH_STRATEGIES.EXISTING);
+    const genDataWithNewRefreshStrategy = chartDataGenerator(counterpartUsers, REFRESH_STRATEGIES.NEW);
 
     for (let i = 1; i <= OVSERVED_DAYS; i++) {
       const day = today.add(i, 'day');
-
-      users.forEach((user) => {
-        // Simulate a user visit
-        if (_.random(AVERAGE_VISIT_FREQUENCY_IN_DAYS) === 0) {
-          user.visit(day);
-        }
-      });
-
-      const loggedInUsers = users.filter((user) => user.isLoggedIn(day));
-
-      data.push({
-        day: `Day ${i}`,
-        value: loggedInUsers.length,
-      });
+      data.push(genDataWithExistingRefreshStrategy(day));
+      data.push(genDataWithNewRefreshStrategy(day));
     }
 
-    setChatData(data);
+    setChartData(data);
   }, []);
 
   const chartProps = {

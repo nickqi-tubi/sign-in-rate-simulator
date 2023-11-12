@@ -1,11 +1,13 @@
-import { SESSION_EXPIRES_IN_DAYS, TOKEN_EXPIRES_IN_DAYS } from 'src/constants';
+import dayjs from 'dayjs';
+
+import { SESSION_EXPIRES_IN_DAYS, TOKEN_EXPIRES_IN_DAYS, REFRESH_STRATEGIES } from 'src/constants';
 
 class User {
   constructor({ id, tokenRefreshAt, sessionRefreshAt, lastSeenAt }) {
     this.id = id;
-    this.lastSeenAt = lastSeenAt;
-    this.sessionRefreshAt = sessionRefreshAt;
-    this.tokenRefreshAt = tokenRefreshAt;
+    this.lastSeenAt = dayjs(lastSeenAt);
+    this.sessionRefreshAt = dayjs(sessionRefreshAt);
+    this.tokenRefreshAt = dayjs(tokenRefreshAt);
   }
 
   isLoggedIn = (day) => {
@@ -20,16 +22,18 @@ class User {
     return day.diff(this.tokenRefreshAt, 'day') > TOKEN_EXPIRES_IN_DAYS;
   };
 
-  visit = (day) => {
+  visit = (day, refreshStrategy) => {
     this.lastSeenAt = day;
 
-    // if (this.isLoggedIn(day) && this.isTokenExpired(day)) {
-    //   this.tokenRefreshAt = day;
-    //   this.sessionRefreshAt = day;
-    // }
-
-    this.tokenRefreshAt = day;
-    this.sessionRefreshAt = day;
+    if (refreshStrategy === REFRESH_STRATEGIES.EXISTING) {
+      this.tokenRefreshAt = day;
+      this.sessionRefreshAt = day;
+    } else {
+      if (this.isLoggedIn(day) && this.isTokenExpired(day)) {
+        this.tokenRefreshAt = day;
+        this.sessionRefreshAt = day;
+      }
+    }
   };
 }
 
