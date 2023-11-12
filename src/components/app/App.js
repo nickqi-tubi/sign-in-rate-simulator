@@ -10,8 +10,8 @@ import styles from './App.module.scss';
 
 const USER_NUM = 10000;
 const LAST_SEEN_RANGE = 10;
-const OVSERVED_DAYS = 90;
-const DAYS_SPAN_PER_TICK = 9;
+const OVSERVED_DAYS = 120;
+const DAYS_SPAN_PER_TICK = 10;
 const AVERAGE_VISIT_FREQUENCY_IN_DAYS = 28;
 
 const today = dayjs();
@@ -60,10 +60,6 @@ const App = () => {
   useEffect(() => {
     const data = [];
     const { users, counterpartUsers } = initializeUsers();
-    console.log({
-      users,
-      counterpartUsers,
-    });
     const genDataWithExistingRefreshStrategy = chartDataGenerator(users, REFRESH_STRATEGIES.EXISTING);
     const genDataWithNewRefreshStrategy = chartDataGenerator(counterpartUsers, REFRESH_STRATEGIES.NEW);
 
