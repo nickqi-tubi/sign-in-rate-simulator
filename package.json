@@ -8,7 +8,7 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "*.{js,css,md}": "prettier --write"
+    "*": "prettier --write --ignore-unknown"
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +41,7 @@
     "husky": "^8.0.3",
     "lint-staged": "^15.1.0",
     "prettier": "^3.0.3",
-    "prettier-eslint-cli": "^8.0.1"
+    "prettier-eslint-cli": "^8.0.1",
+    "sass": "^1.69.5"
   }
 }
