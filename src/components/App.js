@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 
-import styles from './App.module.scss';
 import user from 'models/user';
+
+import styles from './App.module.scss';
 
 const App = () => {
   useEffect(() => {
