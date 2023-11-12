@@ -1,7 +1,8 @@
 import dayjs from 'dayjs';
 import _ from 'lodash';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
+import Chart from 'src/components/chart';
 import User from 'src/models/user';
 
 import styles from './App.module.scss';
@@ -9,6 +10,7 @@ import styles from './App.module.scss';
 const USER_NUM = 10000;
 const LAST_SEEN_RANGE = 10;
 const OVSERVED_DAYS = 90;
+const DAYS_SPAN_PER_TICK = 9;
 const AVERAGE_VISIT_FREQUENCY_IN_DAYS = 28;
 
 const today = dayjs();
@@ -33,7 +35,10 @@ const initializeUsers = () => {
 };
 
 const App = () => {
+  const [chartData, setChatData] = useState([]);
+
   useEffect(() => {
+    const data = [];
     const users = initializeUsers();
 
     for (let i = 1; i <= OVSERVED_DAYS; i++) {
@@ -47,13 +52,29 @@ const App = () => {
       });
 
       const loggedInUsers = users.filter((user) => user.isLoggedIn(day));
-      console.log(`Day ${i}: ${loggedInUsers.length} users logged in.`);
+
+      data.push({
+        day: `Day ${i}`,
+        value: loggedInUsers.length,
+      });
     }
+
+    setChatData(data);
   }, []);
+
+  const chartProps = {
+    data: chartData,
+    config: {
+      xAxis: {
+        tickCount: OVSERVED_DAYS / DAYS_SPAN_PER_TICK,
+      },
+    },
+  };
 
   return (
     <div className={styles.root}>
       <h1>Sign-In Rate Simulator</h1>
+      <Chart {...chartProps} />
     </div>
   );
 };
