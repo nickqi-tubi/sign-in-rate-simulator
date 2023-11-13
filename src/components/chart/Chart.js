@@ -20,6 +20,15 @@ const Chart = ({ data, config }) => {
         formatter: (num) => `${(num / baselineUserNum) * 100}%`,
       },
     },
+    tooltip: {
+      formatter: (datum) => ({
+        name: datum.refreshStrategy,
+        value: `${datum.value.toLocaleString('en-US')} / ${baselineUserNum.toLocaleString('en-US')} = (${(
+          (datum.value / baselineUserNum) *
+          100
+        ).toFixed(2)}%)`,
+      }),
+    },
     ...config,
   };
 
