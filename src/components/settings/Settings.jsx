@@ -24,7 +24,7 @@ const Controller = ({ status, setStatus, totalUsers, setTotalUsers }) => {
   const userRateProps = {};
 
   return (
-    <Row className={styles.root}>
+    <Row className={styles.root} gutter={[16, 16]}>
       <Slider text="Total Users" {...totalUserProps} />
 
       <Slider text="Newly Registered User Rate" {...userRateProps} />
