@@ -27,6 +27,7 @@ const initializeUsers = ({ newlyRegisteredUserRate, sessionExpiresInDays, tokenE
   for (let i = 0; i < totalUsers; i++) {
     const lastSeenAtDay = today.subtract(_.random(LAST_SEEN_WITHIN_DAYS), 'day');
     const lastSeenAt = lastSeenAtDay.valueOf();
+    const lastSeenDiff = today.diff(lastSeenAtDay, 'day');
     const isNewlyRegistered = _.random(1, true) <= newlyRegisteredUserRate;
 
     const attrs = {
@@ -38,7 +39,6 @@ const initializeUsers = ({ newlyRegisteredUserRate, sessionExpiresInDays, tokenE
     };
 
     if (isNewlyRegistered) {
-      const lastSeenDiff = today.diff(lastSeenAtDay, 'day');
       const daysAgo = _.random(0, SESSION_EXPIRES_IN_DAYS - lastSeenDiff);
       const refreshAt = lastSeenAtDay.subtract(daysAgo, 'day').valueOf();
       attrs.sessionRefreshAt = refreshAt;
@@ -46,9 +46,16 @@ const initializeUsers = ({ newlyRegisteredUserRate, sessionExpiresInDays, tokenE
     }
 
     const user = new User(attrs);
-    const counterpartUser = new User({ ...attrs, tokenExpiresInDays, sessionExpiresInDays });
-
     users.push(user);
+
+    if (isNewlyRegistered && sessionExpiresInDays !== SESSION_EXPIRES_IN_DAYS) {
+      const daysAgo = _.random(0, sessionExpiresInDays - lastSeenDiff);
+      const refreshAt = lastSeenAtDay.subtract(daysAgo, 'day').valueOf();
+      attrs.sessionRefreshAt = refreshAt;
+      attrs.tokenRefreshAt = refreshAt;
+    }
+
+    const counterpartUser = new User({ ...attrs, tokenExpiresInDays, sessionExpiresInDays });
     counterpartUsers.push(counterpartUser);
   }
 

@@ -18,7 +18,7 @@ export const STATUS = {
 
 export const SETTINGS = {
   TOTAL_USERS: {
-    default: 10000,
+    default: 30000,
     max: 50000,
     min: 1000,
     step: 1000,
