@@ -15,6 +15,7 @@ import {
   STATUS,
 } from 'src/constants';
 import User from 'src/models/user';
+import getRandom from 'src/utils/random';
 
 import styles from './App.module.scss';
 
@@ -70,7 +71,7 @@ const chartDataGenerator =
     if (dayDiff > 0) {
       users.forEach((user) => {
         // Simulate a user visit
-        if (_.random(visitPerDays) === 0) {
+        if (getRandom('randu')(0, visitPerDays) === 0) {
           user.visit(day, refreshStrategy);
         }
       });

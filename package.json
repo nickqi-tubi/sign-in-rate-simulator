@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@ant-design/plots": "^1.2.5",
+    "@stdlib/random": "^0.1.1",
     "antd": "^5.11.1",
     "dayjs": "^1.11.10",
     "lodash": "^4.17.21",
