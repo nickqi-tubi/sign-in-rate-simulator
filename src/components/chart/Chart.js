@@ -7,6 +7,8 @@ const Chart = ({ data, config }) => {
 
   const baselineUserNum = data[0].value;
 
+  const formatter = (num) => `${((num / baselineUserNum) * 100).toFixed(2)}%`;
+
   const props = {
     data,
     xField: 'day',
@@ -15,22 +17,20 @@ const Chart = ({ data, config }) => {
     seriesField: 'refreshStrategy',
     meta: {
       value: {
-        max: baselineUserNum,
         min: Math.min(...data.map((d) => d.value)),
       },
     },
     yAxis: {
       label: {
-        formatter: (num) => `${parseInt((num / baselineUserNum) * 100, 10)}%`,
+        formatter,
       },
     },
     tooltip: {
       formatter: (datum) => ({
         name: datum.refreshStrategy,
-        value: `${datum.value.toLocaleString('en-US')} / ${baselineUserNum.toLocaleString('en-US')} = (${(
-          (datum.value / baselineUserNum) *
-          100
-        ).toFixed(2)}%)`,
+        value: `${datum.value.toLocaleString('en-US')} / ${baselineUserNum.toLocaleString('en-US')} = (${formatter(
+          datum.value,
+        )})`,
       }),
     },
     ...config,

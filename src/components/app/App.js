@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 
 import Chart from 'src/components/chart';
 import Settings from 'src/components/settings';
-import { REFRESH_STRATEGIES, SESSION_EXPIRES_IN_DAYS, TOTAL_USERS } from 'src/constants';
+import { REFRESH_STRATEGIES, SESSION_EXPIRES_IN_DAYS, TOTAL_USERS, STATUS } from 'src/constants';
 import User from 'src/models/user';
 
 import styles from './App.module.scss';
@@ -76,14 +76,16 @@ const chartDataGenerator = (users, refreshStrategy) => (day) => {
 };
 
 const App = () => {
-  const [isCalculating, setIsCalculating] = useState(false);
+  const [status, setStatus] = useState(STATUS.IDLE);
   const [chartData, setChartData] = useState([]);
   const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.DEFAULT);
 
   useEffect(() => {
-    if (isCalculating) {
+    if (status !== STATUS.IDLE) {
       return;
     }
+
+    setStatus(STATUS.RUNNING);
 
     const { users, counterpartUsers } = initializeUsers({
       totalUsers,
@@ -101,14 +103,13 @@ const App = () => {
     setChartData(data);
 
     _.delay(() => {
-      setChartData(data);
-      setIsCalculating(false);
+      setStatus(STATUS.DONE);
     }, 2000);
-  }, [isCalculating, totalUsers]);
+  }, [status, totalUsers]);
 
   const settingsProps = {
-    isCalculating,
-    setIsCalculating,
+    status,
+    setStatus,
     totalUsers,
     setTotalUsers,
   };
@@ -126,7 +127,7 @@ const App = () => {
     <div className={styles.root}>
       <Typography.Title level={1}>Sign-In Rate Simulator</Typography.Title>
       <Settings {...settingsProps} />
-      {isCalculating ? (
+      {status === STATUS.RUNNING ? (
         <div className={styles.spinner}>
           <Spin size="large" />
         </div>

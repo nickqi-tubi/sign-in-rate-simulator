@@ -1,14 +1,14 @@
 import { Button, Col, InputNumber, Row, Slider, Typography } from 'antd';
 
-import { TOTAL_USERS } from 'src/constants';
+import { TOTAL_USERS, STATUS } from 'src/constants';
 
 import styles from './settings.module.scss';
 
 const { Text } = Typography;
 
-const Controller = ({ isCalculating, setIsCalculating, totalUsers, setTotalUsers }) => {
+const Controller = ({ status, setStatus, totalUsers, setTotalUsers }) => {
   const onButtonClick = () => {
-    setIsCalculating(true);
+    setStatus(STATUS.IDLE);
   };
 
   const onChange = (value) => {
@@ -53,7 +53,7 @@ const Controller = ({ isCalculating, setIsCalculating, totalUsers, setTotalUsers
       </Col>
 
       <Col span={24}>
-        <Button type="primary" onClick={onButtonClick} loading={isCalculating}>
+        <Button type="primary" onClick={onButtonClick} loading={status === STATUS.RUNNING}>
           Calculate
         </Button>
       </Col>

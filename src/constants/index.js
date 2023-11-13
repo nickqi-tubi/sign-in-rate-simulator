@@ -13,3 +13,9 @@ export const TOTAL_USERS = {
   MAX: 50000,
   DEFAULT: 10000,
 };
+
+export const STATUS = {
+  IDLE: 'IDLE',
+  RUNNING: 'RUNNING',
+  DONE: 'DONE',
+};
