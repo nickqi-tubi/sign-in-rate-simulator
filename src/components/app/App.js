@@ -78,7 +78,7 @@ const chartDataGenerator = (users, refreshStrategy) => (day) => {
 const App = () => {
   const [status, setStatus] = useState(STATUS.IDLE);
   const [chartData, setChartData] = useState([]);
-  const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.DEFAULT);
+  const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.default);
 
   useEffect(() => {
     if (status !== STATUS.IDLE) {

@@ -1,10 +1,10 @@
-import { Button, Col, InputNumber, Row, Slider, Typography } from 'antd';
+import { Button, Col, Row } from 'antd';
+import _ from 'lodash';
 
 import { TOTAL_USERS, STATUS } from 'src/constants';
 
 import styles from './settings.module.scss';
-
-const { Text } = Typography;
+import Slider from './Slider';
 
 const Controller = ({ status, setStatus, totalUsers, setTotalUsers }) => {
   const onButtonClick = () => {
@@ -15,42 +15,19 @@ const Controller = ({ status, setStatus, totalUsers, setTotalUsers }) => {
     setTotalUsers(value);
   };
 
-  const props = {
-    min: TOTAL_USERS.MIN,
-    max: TOTAL_USERS.MAX,
+  const totalUserProps = {
+    ..._.pick(TOTAL_USERS, ['min', 'max', 'step']),
     value: totalUsers,
     onChange,
   };
 
+  const userRateProps = {};
+
   return (
     <Row className={styles.root}>
-      <Col sm={24} md={12}>
-        <Row>
-          <Col span={24}>
-            <Text strong>Total Users</Text>
-          </Col>
-          <Col span={18}>
-            <Slider {...props} />
-          </Col>
-          <Col span={6}>
-            <InputNumber {...props} />
-          </Col>
-        </Row>
-      </Col>
+      <Slider text="Total Users" {...totalUserProps} />
 
-      <Col sm={24} md={12}>
-        <Row>
-          <Col span={24}>
-            <Text strong>Newly Registered User Rate</Text>
-          </Col>
-          <Col span={18}>
-            <Slider min={0} max={20} value={0} />
-          </Col>
-          <Col span={6}>
-            <InputNumber min={0} max={20} value={0} />
-          </Col>
-        </Row>
-      </Col>
+      <Slider text="Newly Registered User Rate" {...userRateProps} />
 
       <Col span={24}>
         <Button type="primary" onClick={onButtonClick} loading={status === STATUS.RUNNING}>
