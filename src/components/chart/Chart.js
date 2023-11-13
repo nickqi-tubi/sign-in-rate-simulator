@@ -1,6 +1,10 @@
 import { Line } from '@ant-design/plots';
 
 const Chart = ({ data, config }) => {
+  if (!data.length) {
+    return null;
+  }
+
   const baselineUserNum = data[0].value;
 
   const props = {

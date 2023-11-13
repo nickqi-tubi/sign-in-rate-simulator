@@ -1,8 +1,10 @@
+import { Col, InputNumber, Row, Slider, Space } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
 import Chart from 'src/components/chart';
+import Controller from 'src/components/controller';
 import { REFRESH_STRATEGIES, SESSION_EXPIRES_IN_DAYS } from 'src/constants';
 import User from 'src/models/user';
 
@@ -104,7 +106,8 @@ const App = () => {
   return (
     <div className={styles.root}>
       <h1>Sign-In Rate Simulator</h1>
-      {chartData.length ? <Chart {...chartProps} /> : null}
+      <Controller />
+      {<Chart {...chartProps} />}
     </div>
   );
 };
