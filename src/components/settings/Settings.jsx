@@ -1,5 +1,4 @@
-import { Col, InputNumber, Row, Slider, Typography } from 'antd';
-import _ from 'lodash';
+import { Button, Col, InputNumber, Row, Slider, Typography } from 'antd';
 
 import { TOTAL_USERS } from 'src/constants';
 
@@ -7,19 +6,19 @@ import styles from './settings.module.scss';
 
 const { Text } = Typography;
 
-const Controller = ({ totalUsers, setTotalUsers }) => {
-  console.log('Controller!!', {
-    totalUsers,
-  });
+const Controller = ({ isCalculating, setIsCalculating, totalUsers, setTotalUsers }) => {
+  const onButtonClick = () => {
+    setIsCalculating(true);
+  };
 
-  const onChange = _.debounce((value) => {
+  const onChange = (value) => {
     setTotalUsers(value);
-  }, 300);
+  };
 
   const props = {
     min: TOTAL_USERS.MIN,
     max: TOTAL_USERS.MAX,
-    defaultValue: totalUsers,
+    value: totalUsers,
     onChange,
   };
 
@@ -31,10 +30,10 @@ const Controller = ({ totalUsers, setTotalUsers }) => {
             <Text strong>Total Users</Text>
           </Col>
           <Col span={18}>
-            <Slider {...props} value={totalUsers} />
+            <Slider {...props} />
           </Col>
           <Col span={6}>
-            <InputNumber {...props} value={totalUsers} />
+            <InputNumber {...props} />
           </Col>
         </Row>
       </Col>
@@ -51,6 +50,12 @@ const Controller = ({ totalUsers, setTotalUsers }) => {
             <InputNumber min={0} max={20} value={0} />
           </Col>
         </Row>
+      </Col>
+
+      <Col span={24}>
+        <Button type="primary" onClick={onButtonClick} loading={isCalculating}>
+          Calculate
+        </Button>
       </Col>
     </Row>
   );

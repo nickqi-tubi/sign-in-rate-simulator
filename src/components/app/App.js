@@ -1,4 +1,4 @@
-import { Typography } from 'antd';
+import { Typography, Spin } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -76,10 +76,15 @@ const chartDataGenerator = (users, refreshStrategy) => (day) => {
 };
 
 const App = () => {
+  const [isCalculating, setIsCalculating] = useState(false);
   const [chartData, setChartData] = useState([]);
   const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.DEFAULT);
 
   useEffect(() => {
+    if (isCalculating) {
+      return;
+    }
+
     const { users, counterpartUsers } = initializeUsers({
       totalUsers,
     });
@@ -94,9 +99,16 @@ const App = () => {
     }
 
     setChartData(data);
-  }, [totalUsers]);
+
+    _.delay(() => {
+      setChartData(data);
+      setIsCalculating(false);
+    }, 2000);
+  }, [isCalculating, totalUsers]);
 
   const settingsProps = {
+    isCalculating,
+    setIsCalculating,
     totalUsers,
     setTotalUsers,
   };
@@ -114,7 +126,13 @@ const App = () => {
     <div className={styles.root}>
       <Typography.Title level={1}>Sign-In Rate Simulator</Typography.Title>
       <Settings {...settingsProps} />
-      {<Chart {...chartProps} />}
+      {isCalculating ? (
+        <div className={styles.spinner}>
+          <Spin size="large" />
+        </div>
+      ) : (
+        <Chart {...chartProps} />
+      )}
     </div>
   );
 };
