@@ -1,16 +1,15 @@
-import { Col, InputNumber, Row, Slider, Space } from 'antd';
+import { Typography } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
 import Chart from 'src/components/chart';
-import Controller from 'src/components/controller';
-import { REFRESH_STRATEGIES, SESSION_EXPIRES_IN_DAYS } from 'src/constants';
+import Settings from 'src/components/settings';
+import { REFRESH_STRATEGIES, SESSION_EXPIRES_IN_DAYS, TOTAL_USERS } from 'src/constants';
 import User from 'src/models/user';
 
 import styles from './App.module.scss';
 
-const USER_NUM = 10000;
 const LAST_SEEN_RANGE = 10;
 const OVSERVED_DAYS = 120;
 const DAYS_SPAN_PER_TICK = 10;
@@ -19,11 +18,11 @@ const NEWLY_REGISTERED_USER_RATE = 0.2;
 
 const today = dayjs();
 
-const initializeUsers = () => {
+const initializeUsers = ({ totalUsers }) => {
   const users = [];
   const counterpartUsers = [];
 
-  for (let i = 0; i < USER_NUM; i++) {
+  for (let i = 0; i < totalUsers; i++) {
     const lastSeenAtDay = today.subtract(_.random(LAST_SEEN_RANGE), 'day');
     const lastSeenAt = lastSeenAtDay.valueOf();
     const isNewlyRegistered = _.random(1, true) <= NEWLY_REGISTERED_USER_RATE;
@@ -78,9 +77,12 @@ const chartDataGenerator = (users, refreshStrategy) => (day) => {
 
 const App = () => {
   const [chartData, setChartData] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.DEFAULT);
 
   useEffect(() => {
-    const { users, counterpartUsers } = initializeUsers();
+    const { users, counterpartUsers } = initializeUsers({
+      totalUsers,
+    });
     const genDataWithExistingRefreshStrategy = chartDataGenerator(users, REFRESH_STRATEGIES.EXISTING);
     const genDataWithNewRefreshStrategy = chartDataGenerator(counterpartUsers, REFRESH_STRATEGIES.NEW);
     const data = [];
@@ -92,7 +94,12 @@ const App = () => {
     }
 
     setChartData(data);
-  }, []);
+  }, [totalUsers]);
+
+  const settingsProps = {
+    totalUsers,
+    setTotalUsers,
+  };
 
   const chartProps = {
     data: chartData,
@@ -105,8 +112,8 @@ const App = () => {
 
   return (
     <div className={styles.root}>
-      <h1>Sign-In Rate Simulator</h1>
-      <Controller />
+      <Typography.Title level={1}>Sign-In Rate Simulator</Typography.Title>
+      <Settings {...settingsProps} />
       {<Chart {...chartProps} />}
     </div>
   );

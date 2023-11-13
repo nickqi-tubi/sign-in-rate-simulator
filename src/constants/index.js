@@ -6,3 +6,10 @@ export const REFRESH_STRATEGIES = {
   EXISTING: 'EXISTING',
   NEW: 'NEW',
 };
+
+export const TOTAL_USERS = {
+  KEY: 'totalUsers',
+  MIN: 1000,
+  MAX: 50000,
+  DEFAULT: 10000,
+};
