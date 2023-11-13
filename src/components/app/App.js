@@ -12,14 +12,13 @@ import {
   STATUS,
   NEWLY_REGISTERED_USER_RATE,
   VISIT_PER_DAYS,
+  LAST_SEEN_WITHIN_DAYS,
+  LOOKAHEAD_DAYS,
+  DAYS_SPAN_PER_TICK,
 } from 'src/constants';
 import User from 'src/models/user';
 
 import styles from './App.module.scss';
-
-const LAST_SEEN_RANGE = 10;
-const OVSERVED_DAYS = 120;
-const DAYS_SPAN_PER_TICK = 10;
 
 const today = dayjs();
 
@@ -28,7 +27,7 @@ const initializeUsers = ({ totalUsers, newlyRegisteredUserRate }) => {
   const counterpartUsers = [];
 
   for (let i = 0; i < totalUsers; i++) {
-    const lastSeenAtDay = today.subtract(_.random(LAST_SEEN_RANGE), 'day');
+    const lastSeenAtDay = today.subtract(_.random(LAST_SEEN_WITHIN_DAYS), 'day');
     const lastSeenAt = lastSeenAtDay.valueOf();
     const isNewlyRegistered = _.random(1, true) <= newlyRegisteredUserRate;
 
@@ -112,7 +111,7 @@ const App = () => {
     });
     const data = [];
 
-    for (let i = 0; i <= OVSERVED_DAYS; i++) {
+    for (let i = 0; i <= LOOKAHEAD_DAYS; i++) {
       const day = today.add(i, 'day');
       data.push(genDataWithExistingRefreshStrategy(day));
       data.push(genDataWithNewRefreshStrategy(day));
@@ -140,7 +139,7 @@ const App = () => {
     data: chartData,
     config: {
       xAxis: {
-        tickCount: OVSERVED_DAYS / DAYS_SPAN_PER_TICK + 1,
+        tickCount: LOOKAHEAD_DAYS / DAYS_SPAN_PER_TICK + 1,
       },
     },
   };

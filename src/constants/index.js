@@ -1,5 +1,8 @@
-export const SESSION_EXPIRES_IN_DAYS = 60;
+export const LAST_SEEN_WITHIN_DAYS = 10; // Baseline logged-in users are picked within the last 10 days
+export const LOOKAHEAD_DAYS = 120;
+export const DAYS_SPAN_PER_TICK = 10;
 
+export const SESSION_EXPIRES_IN_DAYS = 60;
 export const TOKEN_EXPIRES_IN_DAYS = 14;
 
 export const REFRESH_STRATEGIES = {
