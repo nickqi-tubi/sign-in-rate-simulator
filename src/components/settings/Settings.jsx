@@ -70,7 +70,7 @@ const Settings = ({
   return (
     <Row className={styles.root} gutter={[16, 16]}>
       <Col span={24}>
-        <Title level={3}>Update Simulation Varaibles</Title>
+        <Title level={3}>Update Simulation Variables</Title>
       </Col>
       <Slider text="Total Users" {...totalUserProps} />
       <Slider text="Newly Registered User Rate" {...newlyRegisteredUserRateProps} />
