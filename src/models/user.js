@@ -28,7 +28,9 @@ class User {
     if (refreshStrategy === REFRESH_STRATEGIES.EXISTING) {
       this.tokenRefreshAt = day;
       this.sessionRefreshAt = day;
-    } else {
+    }
+
+    if (refreshStrategy === REFRESH_STRATEGIES.NEW) {
       if (this.isLoggedIn(day) && this.isTokenExpired(day)) {
         this.tokenRefreshAt = day;
         this.sessionRefreshAt = day;

@@ -38,19 +38,24 @@ const initializeUsers = () => {
 };
 
 const chartDataGenerator = (users, refreshStrategy) => (day) => {
-  users.forEach((user) => {
-    // Simulate a user visit
-    if (_.random(AVERAGE_VISIT_FREQUENCY_IN_DAYS) === 0) {
-      user.visit(day, refreshStrategy);
-    }
-  });
+  const dayDiff = day.diff(today, 'day');
+
+  if (dayDiff > 0) {
+    users.forEach((user) => {
+      // Simulate a user visit
+      if (_.random(AVERAGE_VISIT_FREQUENCY_IN_DAYS) === 0) {
+        user.visit(day, refreshStrategy);
+      }
+    });
+  }
 
   const loggedInUsers = users.filter((user) => user.isLoggedIn(day));
 
   return {
-    day: `Day ${day.diff(today, 'day')}`,
+    day: `Day ${dayDiff}`,
     value: loggedInUsers.length,
-    refreshStrategy,
+    refreshStrategy:
+      refreshStrategy === REFRESH_STRATEGIES.EXISTING ? 'Existing Refresh Strategy' : 'New Refresh Strategy',
   };
 };
 
@@ -58,12 +63,12 @@ const App = () => {
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
-    const data = [];
     const { users, counterpartUsers } = initializeUsers();
     const genDataWithExistingRefreshStrategy = chartDataGenerator(users, REFRESH_STRATEGIES.EXISTING);
     const genDataWithNewRefreshStrategy = chartDataGenerator(counterpartUsers, REFRESH_STRATEGIES.NEW);
+    const data = [];
 
-    for (let i = 1; i <= OVSERVED_DAYS; i++) {
+    for (let i = 0; i <= OVSERVED_DAYS; i++) {
       const day = today.add(i, 'day');
       data.push(genDataWithExistingRefreshStrategy(day));
       data.push(genDataWithNewRefreshStrategy(day));
@@ -76,7 +81,7 @@ const App = () => {
     data: chartData,
     config: {
       xAxis: {
-        tickCount: OVSERVED_DAYS / DAYS_SPAN_PER_TICK,
+        tickCount: OVSERVED_DAYS / DAYS_SPAN_PER_TICK + 1,
       },
     },
   };
@@ -84,7 +89,7 @@ const App = () => {
   return (
     <div className={styles.root}>
       <h1>Sign-In Rate Simulator</h1>
-      <Chart {...chartProps} />
+      {chartData.length ? <Chart {...chartProps} /> : null}
     </div>
   );
 };
