@@ -11,6 +11,7 @@ import {
   TOTAL_USERS,
   STATUS,
   NEWLY_REGISTERED_USER_RATE,
+  VISIT_PER_DAYS,
 } from 'src/constants';
 import User from 'src/models/user';
 
@@ -19,7 +20,6 @@ import styles from './App.module.scss';
 const LAST_SEEN_RANGE = 10;
 const OVSERVED_DAYS = 120;
 const DAYS_SPAN_PER_TICK = 10;
-const AVERAGE_VISIT_FREQUENCY_IN_DAYS = 10;
 
 const today = dayjs();
 
@@ -58,33 +58,36 @@ const initializeUsers = ({ totalUsers, newlyRegisteredUserRate }) => {
   return { users, counterpartUsers };
 };
 
-const chartDataGenerator = (users, refreshStrategy) => (day) => {
-  const dayDiff = day.diff(today, 'day');
+const chartDataGenerator =
+  ({ users, visitPerDays, refreshStrategy }) =>
+  (day) => {
+    const dayDiff = day.diff(today, 'day');
 
-  if (dayDiff > 0) {
-    users.forEach((user) => {
-      // Simulate a user visit
-      if (_.random(AVERAGE_VISIT_FREQUENCY_IN_DAYS) === 0) {
-        user.visit(day, refreshStrategy);
-      }
-    });
-  }
+    if (dayDiff > 0) {
+      users.forEach((user) => {
+        // Simulate a user visit
+        if (_.random(visitPerDays) === 0) {
+          user.visit(day, refreshStrategy);
+        }
+      });
+    }
 
-  const loggedInUsers = users.filter((user) => user.isLoggedIn(day));
+    const loggedInUsers = users.filter((user) => user.isLoggedIn(day));
 
-  return {
-    day: `Day ${dayDiff}`,
-    value: loggedInUsers.length,
-    refreshStrategy:
-      refreshStrategy === REFRESH_STRATEGIES.EXISTING ? 'Existing Refresh Strategy' : 'New Refresh Strategy',
+    return {
+      day: `Day ${dayDiff}`,
+      value: loggedInUsers.length,
+      refreshStrategy:
+        refreshStrategy === REFRESH_STRATEGIES.EXISTING ? 'Existing Refresh Strategy' : 'New Refresh Strategy',
+    };
   };
-};
 
 const App = () => {
   const [status, setStatus] = useState(STATUS.IDLE);
   const [chartData, setChartData] = useState([]);
   const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.default);
   const [newlyRegisteredUserRate, setNewlyRegisteredUserRate] = useState(NEWLY_REGISTERED_USER_RATE.default);
+  const [visitPerDays, setVisitPerDays] = useState(VISIT_PER_DAYS.default);
 
   useEffect(() => {
     if (status !== STATUS.IDLE) {
@@ -97,8 +100,16 @@ const App = () => {
       totalUsers,
       newlyRegisteredUserRate,
     });
-    const genDataWithExistingRefreshStrategy = chartDataGenerator(users, REFRESH_STRATEGIES.EXISTING);
-    const genDataWithNewRefreshStrategy = chartDataGenerator(counterpartUsers, REFRESH_STRATEGIES.NEW);
+    const genDataWithExistingRefreshStrategy = chartDataGenerator({
+      users,
+      visitPerDays,
+      refreshStrategy: REFRESH_STRATEGIES.EXISTING,
+    });
+    const genDataWithNewRefreshStrategy = chartDataGenerator({
+      users: counterpartUsers,
+      visitPerDays,
+      refreshStrategy: REFRESH_STRATEGIES.NEW,
+    });
     const data = [];
 
     for (let i = 0; i <= OVSERVED_DAYS; i++) {
@@ -112,15 +123,17 @@ const App = () => {
     _.delay(() => {
       setStatus(STATUS.DONE);
     }, 2000);
-  }, [status, totalUsers, newlyRegisteredUserRate]);
+  }, [status, totalUsers, newlyRegisteredUserRate, visitPerDays]);
 
   const settingsProps = {
     newlyRegisteredUserRate,
     setNewlyRegisteredUserRate,
     setStatus,
     setTotalUsers,
+    setVisitPerDays,
     status,
     totalUsers,
+    visitPerDays,
   };
 
   const chartProps = {

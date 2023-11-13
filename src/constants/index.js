@@ -28,3 +28,11 @@ export const NEWLY_REGISTERED_USER_RATE = {
   min: 0.01,
   step: 0.01,
 };
+
+export const VISIT_PER_DAYS = {
+  key: 'visitPerDays',
+  default: 10,
+  max: 40,
+  min: 1,
+  step: 1,
+};
