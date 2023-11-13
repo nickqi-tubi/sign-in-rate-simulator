@@ -17,7 +17,7 @@ const Chart = ({ data, config }) => {
     },
     yAxis: {
       label: {
-        formatter: (num) => `${(num / baselineUserNum) * 100}%`,
+        formatter: (num) => `${parseInt((num / baselineUserNum) * 100, 10)}%`,
       },
     },
     tooltip: {

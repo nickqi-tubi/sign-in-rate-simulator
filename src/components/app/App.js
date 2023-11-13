@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { useEffect, useState } from 'react';
 
 import Chart from 'src/components/chart';
-import { REFRESH_STRATEGIES } from 'src/constants';
+import { REFRESH_STRATEGIES, SESSION_EXPIRES_IN_DAYS } from 'src/constants';
 import User from 'src/models/user';
 
 import styles from './App.module.scss';
@@ -12,7 +12,8 @@ const USER_NUM = 10000;
 const LAST_SEEN_RANGE = 10;
 const OVSERVED_DAYS = 120;
 const DAYS_SPAN_PER_TICK = 10;
-const AVERAGE_VISIT_FREQUENCY_IN_DAYS = 28;
+const AVERAGE_VISIT_FREQUENCY_IN_DAYS = 10;
+const NEWLY_REGISTERED_USER_RATE = 0.2;
 
 const today = dayjs();
 
@@ -21,15 +22,29 @@ const initializeUsers = () => {
   const counterpartUsers = [];
 
   for (let i = 0; i < USER_NUM; i++) {
-    const lastSeenAt = today.subtract(_.random(LAST_SEEN_RANGE), 'day').valueOf();
+    const lastSeenAtDay = today.subtract(_.random(LAST_SEEN_RANGE), 'day');
+    const lastSeenAt = lastSeenAtDay.valueOf();
+    const isNewlyRegistered = _.random(1, true) <= NEWLY_REGISTERED_USER_RATE;
+
     const attrs = {
       id: i + 1,
+      isNewlyRegistered,
       lastSeenAt,
       sessionRefreshAt: lastSeenAt,
       tokenRefreshAt: lastSeenAt,
     };
+
+    if (isNewlyRegistered) {
+      const lastSeenDiff = today.diff(lastSeenAtDay, 'day');
+      const daysAgo = _.random(0, SESSION_EXPIRES_IN_DAYS - lastSeenDiff);
+      const refreshAt = lastSeenAtDay.subtract(daysAgo, 'day').valueOf();
+      attrs.sessionRefreshAt = refreshAt;
+      attrs.tokenRefreshAt = refreshAt;
+    }
+
     const user = new User(attrs);
     const counterpartUser = new User(attrs);
+
     users.push(user);
     counterpartUsers.push(counterpartUser);
   }
