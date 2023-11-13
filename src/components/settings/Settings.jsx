@@ -8,6 +8,12 @@ import Slider from './Slider';
 
 const { Title } = Typography;
 
+const getSliderProps = (settings, value, onChange) => ({
+  ..._.pick(settings, ['min', 'max', 'step']),
+  value,
+  onChange,
+});
+
 const Settings = ({
   newlyRegisteredUserRate,
   setNewlyRegisteredUserRate,
@@ -26,35 +32,27 @@ const Settings = ({
     setStatus(STATUS.IDLE);
   };
 
-  const totalUserProps = {
-    ..._.pick(SETTINGS.TOTAL_USERS, ['min', 'max', 'step']),
-    value: totalUsers,
-    onChange: setTotalUsers,
-  };
+  const totalUserProps = getSliderProps(SETTINGS.TOTAL_USERS, totalUsers, setTotalUsers);
 
-  const newlyRegisteredUserRateProps = {
-    ..._.pick(SETTINGS.NEWLY_REGISTERED_USER_RATE, ['min', 'max', 'step']),
-    value: newlyRegisteredUserRate,
-    onChange: setNewlyRegisteredUserRate,
-  };
+  const newlyRegisteredUserRateProps = getSliderProps(
+    SETTINGS.NEWLY_REGISTERED_USER_RATE,
+    newlyRegisteredUserRate,
+    setNewlyRegisteredUserRate,
+  );
 
-  const visitPerDaysProps = {
-    ..._.pick(SETTINGS.VISIT_PER_DAYS, ['min', 'max', 'step']),
-    value: visitPerDays,
-    onChange: setVisitPerDays,
-  };
+  const visitPerDaysProps = getSliderProps(SETTINGS.VISIT_PER_DAYS, visitPerDays, setVisitPerDays);
 
-  const tokenExpiresInDaysProps = {
-    ..._.pick(tokenExpiresInDays, ['min', 'max', 'step']),
-    value: tokenExpiresInDays,
-    onChange: setTokenExpiresInDays,
-  };
+  const tokenExpiresInDaysProps = getSliderProps(
+    SETTINGS.TOKEN_EXPIRES_IN_DAYS,
+    tokenExpiresInDays,
+    setTokenExpiresInDays,
+  );
 
-  const sessionExpiresInDaysProps = {
-    ..._.pick(sessionExpiresInDays, ['min', 'max', 'step']),
-    value: sessionExpiresInDays,
-    onChange: setSessionExpiresInDays,
-  };
+  const sessionExpiresInDaysProps = getSliderProps(
+    SETTINGS.SESSION_EXPIRES_IN_DAYS,
+    sessionExpiresInDays,
+    setSessionExpiresInDays,
+  );
 
   return (
     <Row className={styles.root} gutter={[16, 16]}>

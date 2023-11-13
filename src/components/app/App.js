@@ -20,7 +20,7 @@ import styles from './App.module.scss';
 
 const today = dayjs();
 
-const initializeUsers = ({ totalUsers, newlyRegisteredUserRate }) => {
+const initializeUsers = ({ newlyRegisteredUserRate, sessionExpiresInDays, tokenExpiresInDays, totalUsers }) => {
   const users = [];
   const counterpartUsers = [];
 
@@ -46,7 +46,7 @@ const initializeUsers = ({ totalUsers, newlyRegisteredUserRate }) => {
     }
 
     const user = new User(attrs);
-    const counterpartUser = new User({ ...attrs, tokenExpiresInDays: 2, sessionExpiresInDays: 80 });
+    const counterpartUser = new User({ ...attrs, tokenExpiresInDays, sessionExpiresInDays });
 
     users.push(user);
     counterpartUsers.push(counterpartUser);
@@ -97,8 +97,10 @@ const App = () => {
     setStatus(STATUS.RUNNING);
 
     const { users, counterpartUsers } = initializeUsers({
-      totalUsers,
       newlyRegisteredUserRate,
+      sessionExpiresInDays,
+      tokenExpiresInDays,
+      totalUsers,
     });
     const genDataWithExistingRefreshStrategy = chartDataGenerator({
       users,
@@ -123,7 +125,7 @@ const App = () => {
     _.delay(() => {
       setStatus(STATUS.DONE);
     }, 2000);
-  }, [status, totalUsers, newlyRegisteredUserRate, visitPerDays]);
+  }, [status, totalUsers, newlyRegisteredUserRate, visitPerDays, tokenExpiresInDays, sessionExpiresInDays]);
 
   const settingsProps = {
     newlyRegisteredUserRate,
