@@ -18,7 +18,7 @@ export const STATUS = {
 
 export const SETTINGS = {
   TOTAL_USERS: {
-    default: 30000,
+    default: 20000,
     max: 50000,
     min: 1000,
     step: 1000,
@@ -56,4 +56,6 @@ export const SETTINGS = {
 export const RANDOM_GENERATORS = {
   LODASH: 'lodash',
   RANDU: 'randu',
+  BETA22: 'beta22',
+  BETA25: 'beta25',
 };

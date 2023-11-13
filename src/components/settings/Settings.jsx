@@ -6,7 +6,7 @@ import { STATUS, SETTINGS, RANDOM_GENERATORS } from 'src/constants';
 import styles from './settings.module.scss';
 import Slider from './Slider';
 
-const { Text, Title } = Typography;
+const { Link, Text, Title, Paragraph } = Typography;
 
 const getSliderProps = (settings, value, onChange) => ({
   ..._.pick(settings, ['min', 'max', 'step']),
@@ -58,10 +58,11 @@ const Settings = ({
 
   const randomGeneratorProps = {
     value: randomVisitGenerator,
-    style: { width: '100%' },
     options: [
       { value: RANDOM_GENERATORS.LODASH, label: 'Lodash (Uniformly distributed)' },
       { value: RANDOM_GENERATORS.RANDU, label: 'Randu (Uniformly distributed)' },
+      { value: RANDOM_GENERATORS.BETA22, label: 'Beta (alpha=2, beta=2)' },
+      { value: RANDOM_GENERATORS.BETA25, label: 'Beta (alpha=2, beta=5)' },
     ],
     onChange: setRandomVisitGenerator,
   };
@@ -74,11 +75,24 @@ const Settings = ({
       <Slider text="Total Users" {...totalUserProps} />
       <Slider text="Newly Registered User Rate" {...newlyRegisteredUserRateProps} />
       <Slider text="Average Visit Frequency Per Days" {...visitPerDaysProps} />
-      <Col xs={24} md={12}>
-        <Col span={24}>
-          <Text strong>Random Visit Generator</Text>
-        </Col>
-        <Select {...randomGeneratorProps} />
+      <Col span={24}>
+        <Row gutter={[16, 8]}>
+          <Col span={24}>
+            <Text strong>Random Visit Generator</Text>
+            <Paragraph>
+              For the differences of pseudorandom number generators, please check{' '}
+              <Link
+                href="https://github.com/stdlib-js/stdlib/tree/develop/lib/node_modules/%40stdlib/random/base"
+                target="_blank"
+              >
+                https://github.com/stdlib-js/stdlib/tree/develop/lib/node_modules/%40stdlib/random/base
+              </Link>
+            </Paragraph>
+          </Col>
+          <Col span={24}>
+            <Select {...randomGeneratorProps} />
+          </Col>
+        </Row>
       </Col>
 
       <Col span={24}>

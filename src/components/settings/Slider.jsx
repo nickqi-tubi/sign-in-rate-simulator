@@ -1,5 +1,4 @@
 import { Col, InputNumber, Row, Slider as AntSlider, Typography } from 'antd';
-import _ from 'lodash';
 
 const { Text } = Typography;
 
