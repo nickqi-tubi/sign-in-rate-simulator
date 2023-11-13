@@ -4,7 +4,7 @@ import _ from 'lodash';
 const { Text } = Typography;
 
 const Slider = ({ text, ...props }) => (
-  <Col xs={24} sm={24} md={12}>
+  <Col xs={24} md={12}>
     <Row gutter={[8, 0]}>
       <Col span={24}>
         <Text strong>{text}</Text>

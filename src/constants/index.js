@@ -52,3 +52,8 @@ export const SETTINGS = {
     step: 1,
   },
 };
+
+export const RANDOM_GENERATORS = {
+  LODASH: 'lodash',
+  RANDU: 'randu',
+};

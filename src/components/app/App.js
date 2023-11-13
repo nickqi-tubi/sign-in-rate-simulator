@@ -1,4 +1,4 @@
-import { Typography, Spin } from 'antd';
+import { Spin, Typography } from 'antd';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import { useEffect, useState } from 'react';
@@ -9,6 +9,7 @@ import {
   DAYS_SPAN_PER_TICK,
   LAST_SEEN_WITHIN_DAYS,
   LOOKAHEAD_DAYS,
+  RANDOM_GENERATORS,
   REFRESH_STRATEGIES,
   SESSION_EXPIRES_IN_DAYS,
   SETTINGS,
@@ -64,14 +65,14 @@ const initializeUsers = ({ newlyRegisteredUserRate, sessionExpiresInDays, tokenE
 };
 
 const chartDataGenerator =
-  ({ users, visitPerDays, refreshStrategy }) =>
+  ({ users, visitPerDays, refreshStrategy, randomVisitGenerator }) =>
   (day) => {
     const dayDiff = day.diff(today, 'day');
 
     if (dayDiff > 0) {
       users.forEach((user) => {
         // Simulate a user visit
-        if (getRandom('randu')(0, visitPerDays) === 0) {
+        if (getRandom(randomVisitGenerator)(0, visitPerDays) === 0) {
           user.visit(day, refreshStrategy);
         }
       });
@@ -92,6 +93,7 @@ const App = () => {
   const [status, setStatus] = useState(STATUS.IDLE);
 
   const [newlyRegisteredUserRate, setNewlyRegisteredUserRate] = useState(SETTINGS.NEWLY_REGISTERED_USER_RATE.default);
+  const [randomVisitGenerator, setRandomVisitGenerator] = useState(RANDOM_GENERATORS.LODASH);
   const [sessionExpiresInDays, setSessionExpiresInDays] = useState(SETTINGS.SESSION_EXPIRES_IN_DAYS.default);
   const [tokenExpiresInDays, setTokenExpiresInDays] = useState(SETTINGS.TOKEN_EXPIRES_IN_DAYS.default);
   const [totalUsers, setTotalUsers] = useState(SETTINGS.TOTAL_USERS.default);
@@ -113,11 +115,13 @@ const App = () => {
     const genDataWithExistingRefreshStrategy = chartDataGenerator({
       users,
       visitPerDays,
+      randomVisitGenerator,
       refreshStrategy: REFRESH_STRATEGIES.EXISTING,
     });
     const genDataWithNewRefreshStrategy = chartDataGenerator({
       users: counterpartUsers,
       visitPerDays,
+      randomVisitGenerator,
       refreshStrategy: REFRESH_STRATEGIES.NEW,
     });
     const data = [];
@@ -133,12 +137,22 @@ const App = () => {
     _.delay(() => {
       setStatus(STATUS.DONE);
     }, 2000);
-  }, [status, totalUsers, newlyRegisteredUserRate, visitPerDays, tokenExpiresInDays, sessionExpiresInDays]);
+  }, [
+    newlyRegisteredUserRate,
+    randomVisitGenerator,
+    sessionExpiresInDays,
+    status,
+    tokenExpiresInDays,
+    totalUsers,
+    visitPerDays,
+  ]);
 
   const settingsProps = {
     newlyRegisteredUserRate,
+    randomVisitGenerator,
     sessionExpiresInDays,
     setNewlyRegisteredUserRate,
+    setRandomVisitGenerator,
     setSessionExpiresInDays,
     setStatus,
     setTokenExpiresInDays,

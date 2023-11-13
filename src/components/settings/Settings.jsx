@@ -1,12 +1,12 @@
-import { Button, Col, Row, Typography } from 'antd';
+import { Button, Col, Row, Select, Typography } from 'antd';
 import _ from 'lodash';
 
-import { STATUS, SETTINGS } from 'src/constants';
+import { STATUS, SETTINGS, RANDOM_GENERATORS } from 'src/constants';
 
 import styles from './settings.module.scss';
 import Slider from './Slider';
 
-const { Title } = Typography;
+const { Text, Title } = Typography;
 
 const getSliderProps = (settings, value, onChange) => ({
   ..._.pick(settings, ['min', 'max', 'step']),
@@ -16,17 +16,19 @@ const getSliderProps = (settings, value, onChange) => ({
 
 const Settings = ({
   newlyRegisteredUserRate,
+  randomVisitGenerator,
+  sessionExpiresInDays,
   setNewlyRegisteredUserRate,
+  setRandomVisitGenerator,
+  setSessionExpiresInDays,
   setStatus,
+  setTokenExpiresInDays,
   setTotalUsers,
   setVisitPerDays,
   status,
+  tokenExpiresInDays,
   totalUsers,
   visitPerDays,
-  sessionExpiresInDays,
-  setSessionExpiresInDays,
-  tokenExpiresInDays,
-  setTokenExpiresInDays,
 }) => {
   const onButtonClick = () => {
     setStatus(STATUS.IDLE);
@@ -54,6 +56,16 @@ const Settings = ({
     setSessionExpiresInDays,
   );
 
+  const randomGeneratorProps = {
+    value: randomVisitGenerator,
+    style: { width: '100%' },
+    options: [
+      { value: RANDOM_GENERATORS.LODASH, label: 'Lodash (Uniformly distributed)' },
+      { value: RANDOM_GENERATORS.RANDU, label: 'Randu (Uniformly distributed)' },
+    ],
+    onChange: setRandomVisitGenerator,
+  };
+
   return (
     <Row className={styles.root} gutter={[16, 16]}>
       <Col span={24}>
@@ -62,6 +74,12 @@ const Settings = ({
       <Slider text="Total Users" {...totalUserProps} />
       <Slider text="Newly Registered User Rate" {...newlyRegisteredUserRateProps} />
       <Slider text="Average Visit Frequency Per Days" {...visitPerDaysProps} />
+      <Col xs={24} md={12}>
+        <Col span={24}>
+          <Text strong>Random Visit Generator</Text>
+        </Col>
+        <Select {...randomGeneratorProps} />
+      </Col>
 
       <Col span={24}>
         <Title level={3}>Adjust Refresh Strategies</Title>

@@ -1,4 +1,5 @@
 import randu from '@stdlib/random/base/randu';
+import _ from 'lodash';
 
 const getRandomInt = (random) => (min, max) => {
   min = Math.ceil(min);
@@ -10,6 +11,7 @@ const randuRamdom = randu.factory();
 
 const getRandom = (generator) =>
   ({
+    lodash: _.random,
     randu: (...args) => getRandomInt(randuRamdom)(...args),
   })[generator];
 
