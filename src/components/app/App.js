@@ -5,7 +5,13 @@ import { useEffect, useState } from 'react';
 
 import Chart from 'src/components/chart';
 import Settings from 'src/components/settings';
-import { REFRESH_STRATEGIES, SESSION_EXPIRES_IN_DAYS, TOTAL_USERS, STATUS } from 'src/constants';
+import {
+  REFRESH_STRATEGIES,
+  SESSION_EXPIRES_IN_DAYS,
+  TOTAL_USERS,
+  STATUS,
+  NEWLY_REGISTERED_USER_RATE,
+} from 'src/constants';
 import User from 'src/models/user';
 
 import styles from './App.module.scss';
@@ -14,18 +20,17 @@ const LAST_SEEN_RANGE = 10;
 const OVSERVED_DAYS = 120;
 const DAYS_SPAN_PER_TICK = 10;
 const AVERAGE_VISIT_FREQUENCY_IN_DAYS = 10;
-const NEWLY_REGISTERED_USER_RATE = 0.2;
 
 const today = dayjs();
 
-const initializeUsers = ({ totalUsers }) => {
+const initializeUsers = ({ totalUsers, newlyRegisteredUserRate }) => {
   const users = [];
   const counterpartUsers = [];
 
   for (let i = 0; i < totalUsers; i++) {
     const lastSeenAtDay = today.subtract(_.random(LAST_SEEN_RANGE), 'day');
     const lastSeenAt = lastSeenAtDay.valueOf();
-    const isNewlyRegistered = _.random(1, true) <= NEWLY_REGISTERED_USER_RATE;
+    const isNewlyRegistered = _.random(1, true) <= newlyRegisteredUserRate;
 
     const attrs = {
       id: i + 1,
@@ -79,6 +84,7 @@ const App = () => {
   const [status, setStatus] = useState(STATUS.IDLE);
   const [chartData, setChartData] = useState([]);
   const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.default);
+  const [newlyRegisteredUserRate, setNewlyRegisteredUserRate] = useState(NEWLY_REGISTERED_USER_RATE.default);
 
   useEffect(() => {
     if (status !== STATUS.IDLE) {
@@ -89,6 +95,7 @@ const App = () => {
 
     const { users, counterpartUsers } = initializeUsers({
       totalUsers,
+      newlyRegisteredUserRate,
     });
     const genDataWithExistingRefreshStrategy = chartDataGenerator(users, REFRESH_STRATEGIES.EXISTING);
     const genDataWithNewRefreshStrategy = chartDataGenerator(counterpartUsers, REFRESH_STRATEGIES.NEW);
@@ -105,13 +112,15 @@ const App = () => {
     _.delay(() => {
       setStatus(STATUS.DONE);
     }, 2000);
-  }, [status, totalUsers]);
+  }, [status, totalUsers, newlyRegisteredUserRate]);
 
   const settingsProps = {
-    status,
+    newlyRegisteredUserRate,
+    setNewlyRegisteredUserRate,
     setStatus,
-    totalUsers,
     setTotalUsers,
+    status,
+    totalUsers,
   };
 
   const chartProps = {

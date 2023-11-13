@@ -1,33 +1,40 @@
 import { Button, Col, Row } from 'antd';
 import _ from 'lodash';
 
-import { TOTAL_USERS, STATUS } from 'src/constants';
+import { STATUS, TOTAL_USERS, NEWLY_REGISTERED_USER_RATE } from 'src/constants';
 
 import styles from './settings.module.scss';
 import Slider from './Slider';
 
-const Controller = ({ status, setStatus, totalUsers, setTotalUsers }) => {
+const Settings = ({
+  newlyRegisteredUserRate,
+  setNewlyRegisteredUserRate,
+  setStatus,
+  setTotalUsers,
+  status,
+  totalUsers,
+}) => {
   const onButtonClick = () => {
     setStatus(STATUS.IDLE);
-  };
-
-  const onChange = (value) => {
-    setTotalUsers(value);
   };
 
   const totalUserProps = {
     ..._.pick(TOTAL_USERS, ['min', 'max', 'step']),
     value: totalUsers,
-    onChange,
+    onChange: setTotalUsers,
   };
 
-  const userRateProps = {};
+  const newlyRegisteredUserRateProps = {
+    ..._.pick(NEWLY_REGISTERED_USER_RATE, ['min', 'max', 'step']),
+    value: newlyRegisteredUserRate,
+    onChange: setNewlyRegisteredUserRate,
+  };
 
   return (
     <Row className={styles.root} gutter={[16, 16]}>
       <Slider text="Total Users" {...totalUserProps} />
 
-      <Slider text="Newly Registered User Rate" {...userRateProps} />
+      <Slider text="Newly Registered User Rate" {...newlyRegisteredUserRateProps} />
 
       <Col span={24}>
         <Button type="primary" onClick={onButtonClick} loading={status === STATUS.RUNNING}>
@@ -38,4 +45,4 @@ const Controller = ({ status, setStatus, totalUsers, setTotalUsers }) => {
   );
 };
 
-export default Controller;
+export default Settings;
