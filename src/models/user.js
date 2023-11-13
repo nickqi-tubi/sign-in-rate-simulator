@@ -3,12 +3,22 @@ import dayjs from 'dayjs';
 import { SESSION_EXPIRES_IN_DAYS, TOKEN_EXPIRES_IN_DAYS, REFRESH_STRATEGIES } from 'src/constants';
 
 class User {
-  constructor({ id, isNewlyRegistered, tokenRefreshAt, sessionRefreshAt, lastSeenAt }) {
+  constructor({
+    id,
+    isNewlyRegistered,
+    tokenRefreshAt,
+    sessionRefreshAt,
+    lastSeenAt,
+    sessionExpiresInDays = SESSION_EXPIRES_IN_DAYS,
+    tokenExpiresInDays = TOKEN_EXPIRES_IN_DAYS,
+  }) {
     this.id = id;
     this.isNewlyRegistered = isNewlyRegistered;
     this.lastSeenAt = dayjs(lastSeenAt);
     this.sessionRefreshAt = dayjs(sessionRefreshAt);
     this.tokenRefreshAt = dayjs(tokenRefreshAt);
+    this.sessionExpiresInDays = sessionExpiresInDays;
+    this.tokenExpiresInDays = tokenExpiresInDays;
   }
 
   isLoggedIn = (day) => {
@@ -16,11 +26,11 @@ class User {
   };
 
   isSessionExpired = (day) => {
-    return day.diff(this.sessionRefreshAt, 'day') > SESSION_EXPIRES_IN_DAYS;
+    return day.diff(this.sessionRefreshAt, 'day') > this.sessionExpiresInDays;
   };
 
   isTokenExpired = (day) => {
-    return day.diff(this.tokenRefreshAt, 'day') > TOKEN_EXPIRES_IN_DAYS;
+    return day.diff(this.tokenRefreshAt, 'day') > this.tokenExpiresInDays;
   };
 
   refresh = (day) => {

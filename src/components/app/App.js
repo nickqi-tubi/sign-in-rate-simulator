@@ -6,15 +6,13 @@ import { useEffect, useState } from 'react';
 import Chart from 'src/components/chart';
 import Settings from 'src/components/settings';
 import {
-  REFRESH_STRATEGIES,
-  SESSION_EXPIRES_IN_DAYS,
-  TOTAL_USERS,
-  STATUS,
-  NEWLY_REGISTERED_USER_RATE,
-  VISIT_PER_DAYS,
+  DAYS_SPAN_PER_TICK,
   LAST_SEEN_WITHIN_DAYS,
   LOOKAHEAD_DAYS,
-  DAYS_SPAN_PER_TICK,
+  REFRESH_STRATEGIES,
+  SESSION_EXPIRES_IN_DAYS,
+  SETTINGS,
+  STATUS,
 } from 'src/constants';
 import User from 'src/models/user';
 
@@ -48,7 +46,7 @@ const initializeUsers = ({ totalUsers, newlyRegisteredUserRate }) => {
     }
 
     const user = new User(attrs);
-    const counterpartUser = new User(attrs);
+    const counterpartUser = new User({ ...attrs, tokenExpiresInDays: 2, sessionExpiresInDays: 80 });
 
     users.push(user);
     counterpartUsers.push(counterpartUser);
@@ -82,11 +80,14 @@ const chartDataGenerator =
   };
 
 const App = () => {
-  const [status, setStatus] = useState(STATUS.IDLE);
   const [chartData, setChartData] = useState([]);
-  const [totalUsers, setTotalUsers] = useState(TOTAL_USERS.default);
-  const [newlyRegisteredUserRate, setNewlyRegisteredUserRate] = useState(NEWLY_REGISTERED_USER_RATE.default);
-  const [visitPerDays, setVisitPerDays] = useState(VISIT_PER_DAYS.default);
+  const [status, setStatus] = useState(STATUS.IDLE);
+
+  const [newlyRegisteredUserRate, setNewlyRegisteredUserRate] = useState(SETTINGS.NEWLY_REGISTERED_USER_RATE.default);
+  const [sessionExpiresInDays, setSessionExpiresInDays] = useState(SETTINGS.SESSION_EXPIRES_IN_DAYS.default);
+  const [tokenExpiresInDays, setTokenExpiresInDays] = useState(SETTINGS.TOKEN_EXPIRES_IN_DAYS.default);
+  const [totalUsers, setTotalUsers] = useState(SETTINGS.TOTAL_USERS.default);
+  const [visitPerDays, setVisitPerDays] = useState(SETTINGS.VISIT_PER_DAYS.default);
 
   useEffect(() => {
     if (status !== STATUS.IDLE) {
@@ -126,11 +127,15 @@ const App = () => {
 
   const settingsProps = {
     newlyRegisteredUserRate,
+    sessionExpiresInDays,
     setNewlyRegisteredUserRate,
+    setSessionExpiresInDays,
     setStatus,
+    setTokenExpiresInDays,
     setTotalUsers,
     setVisitPerDays,
     status,
+    tokenExpiresInDays,
     totalUsers,
     visitPerDays,
   };
